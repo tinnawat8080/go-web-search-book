@@ -1,0 +1,53 @@
+{{ define "index" }}
+{{ template "header" }}
+<div class="container">
+    <div class="row">
+        <div class="input-group col-lg-6">
+            <input type="text" class="form-control" placeholder="Book's name" aria-label="Book's name"
+                aria-describedby="basic-addon2" id="searchInput">
+            <div class="input-group-append">
+                <button class="btn btn-outline-primary" type="button" onclick="displaySearchResult()">Search</button>
+            </div>
+        </div>
+    </div>
+    <br><br>
+    <div class="row" id="persentCard">
+        {{range .}}
+        <div class="card" style="width: 18rem;">
+            <img class="card-img-top" src="{{.ImageUrl}}">
+            <div class="card-body">
+                <h5 class="card-title">{{.Name}}</h5>
+                <p class="card-text">{{.Author}}</p>
+            </div>
+        </div>&nbsp;
+        {{end}}
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function displaySearchResult() {
+        $.ajax({
+            url: 'search',
+            type: "post",
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify($('#searchInput').val()),
+            dataType: 'json',
+            success: function (r) {
+                $("#persentCard").html("")
+                for (i = 0; i < r.length; i++) {
+                    var content = "<div class='card' style='width: 18rem;'>"
+                    content += "<img class='card-img-top' src='"+r[i]["ImageUrl"]+"'>"
+                    content += "<div class='card-body'>"
+                    content += "<h5 class='card-title'>"+r[i]["Name"]+"</h5>"
+                    content += "<p class='card-text'>"+r[i]["Author"]+"</p>"
+                    content += "</div>"
+                    content += "</div>&nbsp;"
+                    $("#persentCard").append(content)
+                }
+            }
+        })
+    }
+</script>
+{{ template "footer" }}
+{{ end }}
